@@ -1,5 +1,5 @@
 var User = require('../models/user');
-
+var Story = require('../models/story');
 var config = require('../../config');
 
 var secretKey = config.secretKey;
@@ -95,9 +95,37 @@ module.exports = function(app, express){
 	});
 
 	// destination B // provide a legitimate token
-	api.get('/', function(req, res){
+	/*api.get('/', function(req, res){
 		res.json("Hello World");
 	});
+	*/
+
+	api.route('/')
+		.post(function(req, res){
+			var story = new Story({
+				creator: req.decoded.id,
+				content: req.body.content,
+			});
+			story.save(function(err){
+				if(err){
+					res.send(err);
+					return
+				}
+
+				res.json({message: "New Story Created"});
+			});
+		})
+
+		.get(function(req, res){
+			Story.find({creator: req.decoded.id}, function(err, stories){
+				if(err){
+					res.send(err);
+					return;
+				}
+
+				res.json(stories);
+			});	
+		});
 
 	return api;
 }
