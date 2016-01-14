@@ -75,13 +75,13 @@ module.exports = function(app, express){
 		});
 	});
 
-	app.use(function(req, res, next){
+	api.use(function(req, res, next){
 		console.log("Somebody just come to our app!");
 
 		var token = req.body.token || req.param('token') || req.headers['x-access-token'];
 
 		if(token){
-			jsonwebtoken.verify(token, superSecret, function(err, decoded){
+			jsonwebtoken.verify(token, secretKey, function(err, decoded){
 				if(err){
 					res.status(403).send({success: false, message: "Failed to authenticate user"});
 				}else{
@@ -92,6 +92,11 @@ module.exports = function(app, express){
 		} else {
 			res.status(403).send({success: false, message: "No Token Provided"});
 		}
+	});
+
+	// destination B // provide a legitimate token
+	api.get('/', function(req, res){
+		res.json("Hello World");
 	});
 
 	return api;
