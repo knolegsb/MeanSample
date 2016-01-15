@@ -127,5 +127,10 @@ module.exports = function(app, express){
 			});	
 		});
 
+
+	api.get('/me', function(req, res){
+		res.json(req.decoded);
+	});	
+
 	return api;
 }
